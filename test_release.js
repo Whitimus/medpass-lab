@@ -155,12 +155,19 @@ assert.match(fallback('patient').text,/name|allergies/i);
 assert(app.includes('window.MedPassDialogue.fallback(role)'), 'Replies must use recipient selected in Speak to');
 assert(app.includes('role="log" aria-live="polite"'),'Dialogue must be a live region');
 assert(read('index.html').includes('id="dialogue-announcement"'),'Persistent announcer must be present');
+assert(app.includes('function guidedPrepScreen(s,m)'), 'Guided injection preparation missing');
+assert(app.includes("prepLayout:'guided'"), 'Guided prep must be the default');
+assert(app.includes('data-act=\"prepView\"'), 'Advanced full checklist toggle missing');
+assert(app.includes('data-act=\"nextMed\"'), 'Next medication progression missing');
+assert(app.includes('function prepNextAction(s,m)'), 'Full checklist fallback missing');
+assert(app.includes('class=\"prepFeedback\"'), 'Rejected drawing steps must show inline feedback');
+assert(read('styles.css').includes('.prepHelp'), 'Prep guide styling missing');
 assert(app.includes('function updateVitals(s,m)'),'Visible patient vitals must update');
 assert(app.includes('function typedDialogue(role,text)'),'Free text interaction missing');
 assert(!/👩🏻‍🦳/.test(app),'Do not use platform specific emoji for patient');
 assert(read('README.md').includes('confirmed with their instructor and college'),'Publication status outdated');
 const sw=read('sw.js');
-assert(/medpass-lab-v7-[0-9a-f]{12}/.test(sw),'Service worker must use versioned content hash');
+assert(/medpass-lab-v9-[0-9a-f]{12}/.test(sw),'Service worker must use versioned content hash');
 assert(sw.includes('dialog_engine.js'),'Offline cache must include dialogue engine');
 assert(sw.includes("fetch(event.request,{cache:'no-store'})"));
 assert(sw.includes('key.startsWith(PREFIX)'));
@@ -178,7 +185,7 @@ assert(read(browserFile).includes("os.environ.get('CHROMIUM_PATH')"),'Browser pa
 assert(!read(browserFile).includes('/usr/bin/chromium'),'Browser path must not be hard coded');
 assert(read(browserFile).includes("start(page, 'MAR1')"),'Missing EMAR browser coverage');
 if(process.argv.includes('--browser')){
- console.log('Core v7 assertions passed. Running required Chromium browser checks...');
+ console.log('Core v9 assertions passed. Running required Chromium browser checks...');
  try{
   execFileSync(process.env.PYTHON || 'python3',[path.join(root,browserFile)],{cwd:root,stdio:'inherit',timeout:120000});
  }catch(error){
@@ -187,7 +194,7 @@ if(process.argv.includes('--browser')){
   console.error('Optional: set PYTHON to your Python interpreter and CHROMIUM_PATH to your Chromium executable.');
   process.exit(1);
  }
- console.log('All v7 checks passed, including real Chromium bedside interactions.');
+ console.log('All v9 checks passed, including real Chromium bedside interactions.');
 }else{
- console.log('All v7 core release assertions passed (Node only). For complete browser verification: node test_release.js --browser');
+ console.log('All v9 core release assertions passed (Node only). For complete browser verification: node test_release.js --browser');
 }

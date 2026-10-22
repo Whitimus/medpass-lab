@@ -1,6 +1,15 @@
-# MedPass Lab v6
+# MedPass Lab v9
 
 MedPass Lab is a responsive offline capable simulation app for practicing an N1009 medication pass and conversational bedside checks. It includes 20 adapted fictional eMAR scenarios and focused medication drills, patient and instructor interaction, documented six rights checks, a 30 minute timer, and a simulated S/U report. It is **educational practice software**, not medical decision support or an official faculty grading tool.
+
+
+## Guided syringe preparation in v9
+
+The injection workbench opens in **Guided preparation** by default. It shows one active task at a time rather than dozens of controls at once. The current order, stage progress, and completed tasks stay visible. After entering a value, confirm the action and the next step appears. Label preparation happens before vial withdrawal, and air volume is entered only when the workflow calls for it. On phones the active workbench appears above the conversation panel during Check 1.
+
+The **View full checklist** control returns to the original complete checkoff layout at any point. Switching modes does not reset any of the simulated preparation state. The same safety validation and grading engine backs both layouts.
+
+Once the current injectable medication is ready, the app offers a **Prepare next medication** button if any orders remain, or **Continue to instructor check** when every medication is ready. Completed steps can be reviewed inside the expandable history.
 
 ## Publication permission
 
@@ -19,7 +28,7 @@ The practice patient and instructor use a **keyword matched conversation engine*
 
 The patient may request water at the bedside, correct an explicitly incorrect name, report worsening pain, or report increased sleepiness after a simulated opioid. Dizziness answers now reflect the selected scenario's findings, including the hypotensive furosemide safety challenge. Questions about blood thinners, other medicines, or specific drugs draw on today's simulated orders while explaining that the home medication history is not fully known. Questions such as “Are you Taking Warfarin?” and “Are you taking any other medicines?” are handled as medication history, not as an incorrect patient name. Medication recognition is automatically derived from all eMAR and drill cases, generic reference names, and every trade name in the reference table (including each name separated by a slash). For example, Tylenol, Colace, Lasix, Coumadin, Jantoven, Percocet and Benadryl resolve without a manually maintained list. Responses link brands to the matching generic MAR order while keeping home medication history explicitly unverified. Questions such as “Are you having any pain?” and “Are you feeling dizzy?” are treated as symptom assessments, not identity mismatches. Unknown questions are answered by the selected conversation recipient. Asking the proctor for clinical findings updates the bedside status card. A simulated opioid reassessment action adds fictional repeat respiratory, oxygenation, pain and alertness findings.
 
-The interface uses responsive vector illustrations rather than platform specific emoji for patient and instructor portraits. The dialogue uses `role="log"`, `aria-live="polite"`, and a separate persistent status announcer to accommodate full viewport redraws. On narrow screens the conversation is placed above the workbench rather than below the entire page.
+The interface uses responsive vector illustrations rather than platform specific emoji for patient and instructor portraits. The dialogue uses `role="log"`, `aria-live="polite"`, and a separate persistent status announcer to accommodate full viewport redraws. On narrow screens the conversation appears above the action area at the bedside, but moves below the active workbench during Check 1 to keep drawing controls within easy reach.
 
 Coached mode offers immediate feedback on unsafe steps and permits correction, but critical errors remain documented in the final report. Checkoff mode retains the immediate unsafe termination rules. Neither mode can evaluate real clinical skill or actual patient findings.
 
@@ -65,3 +74,9 @@ The release suite compares generated output against source and checks the keywor
 The workbook has no patient specific insulin correction scale and some NPH orders lack dose units. The example correction scale and 12 unit NPH clarification are fictional. Patient ages and birthday are synthetic. The uploaded eMAR omits real expiration dates; the sample 12/2028 date is training data. Unusual 18 mg IM normal saline orders are lab exercises, not normal clinical orders. The 5 mL influenza multidose vial is **not** a patient dose. The 2026 to 2027 US influenza formulation is trivalent Fluzone although the older course list says “Fluzone Quadrivalent.” The checklist and slides differ in some vial and needle teaching; check current faculty instructions, manufacturer labeling and institutional policy before real administration.
 
 This app cannot verify physical hand hygiene, technique, student competence, or any clinical drug order. Checkoff scores are for self practice only. No network requests or external data processors are required by the app itself, and results are kept on device unless you export them manually.
+
+## Injection workbench help (v9)
+
+Drawing step buttons are available to click, but the action is recorded only when prerequisites are complete. First wash hands, check the MAR and allergies, gather the vial, confirm expiry, and complete all six first-check rights. Then select and confirm the syringe, clean the vial, and enter the proper air volume in mL before attempting withdrawal. NPH also needs instructor clarification when the MAR supplies no dose, and a vial rolling step.
+
+The workbench now displays the next required action directly above the controls, plus an inline warning next to the drawing buttons if a student taps a step too early. This avoids relying on the notice at the top of a long mobile screen. These are educational workflow gates and do not simulate physical vial actions.

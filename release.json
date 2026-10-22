@@ -1,1 +1,5 @@
-{"release":"v7","app":"MedPass Lab","description":"Interactive fictional clinical checkoff practice simulator"}
+{
+  "release": "v9",
+  "app": "MedPass Lab",
+  "description": "Interactive fictional clinical checkoff practice simulator"
+}

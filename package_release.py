@@ -8,7 +8,7 @@ from shutil import copyfile
 import hashlib
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT.parent
-VERSION = 'v7'
+VERSION = 'v9'
 FILES = [
     'README.md','index.html','N1009_MedPass_Lab.html','app.js','data.js',
     'dialog_engine.js','cases.json','styles.css','icon.svg','manifest.webmanifest',

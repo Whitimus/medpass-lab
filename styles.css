@@ -49,3 +49,38 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .transcriptReport p{color:#c7dee5;font-size:12px;line-height:1.5;margin:0;padding:7px 0;border-bottom:1px solid #284457}
 .transcriptReport p:last-child{border-bottom:0}
 .transcriptReport b{color:#a1edd8}
+
+/* Check 1 drawing steps: show the next prerequisite and any rejected-action feedback locally. */
+.prepHelp{display:flex;flex-direction:column;gap:5px;border:1px solid #426a72;background:#153440;color:#d4f5f0;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.5;margin:11px 0}
+.prepHelp strong{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#8ee9d5}
+.prepFeedback{border:1px solid #97764c;background:#403526;color:#ffdfb5;padding:12px 14px;border-radius:11px;font-size:13px;line-height:1.5;margin:12px 0}
+
+/* v9: Guided injection prep. Keep the next required action in one clearly labeled panel. */
+.prepModeRow{display:flex;justify-content:space-between;align-items:center;gap:9px;flex-wrap:wrap;margin:14px 0}
+.guidedOrder{padding:14px 15px;border:1px solid #315b68;background:#0b2937;border-radius:13px;margin-bottom:13px}
+.guidedOrder strong{display:block;font-size:18px;margin:5px 0}
+.guidedOrder p{margin:6px 0 0;font-size:13px;line-height:1.5;color:#bed9e0;overflow-wrap:anywhere}
+.guidedProgress{padding:12px 14px;background:#102b3b;border:1px solid #274d59;border-radius:13px;margin-bottom:15px}
+.guidedProgress .row{font-size:12px;gap:6px}.guidedProgress .row span{color:var(--muted)}
+.guidedProgress .progress{height:7px;margin:10px 0 12px}
+.guidedPhases{display:flex;flex-wrap:wrap;gap:6px}
+.guidedPhase{font-size:11px;border:1px solid #355566;color:#a8bfca;padding:6px 8px;border-radius:20px;white-space:normal}
+.guidedPhase.current{background:#254951;border-color:#7cddd2;color:#d0fff3;font-weight:800}
+.guidedPhase.completed{background:#183c35;border-color:#3a816d;color:#afecce}
+.guidedCurrent{padding:19px;border:2px solid #62c7bd;border-radius:16px;background:linear-gradient(160deg,#173946,#0f2738);scroll-margin-top:90px}
+.guidedCurrent h3{font-size:21px;line-height:1.25;margin:8px 0 10px;letter-spacing:-.015em}
+.guidedDescription{font-size:14px;color:#c9e3e6;line-height:1.65;margin:5px 0 17px}
+.guidedCurrent .field{margin:10px 0}.guidedCurrent input,.guidedCurrent select{max-width:100%;width:100%}
+.guidedCurrent .grid2{gap:10px}
+.guidedReadout{background:#0b2635;padding:12px;border-radius:10px;border:1px solid #3b6873;color:#c8e7e5;font-size:13px;line-height:1.6}
+.guidedHint{color:#d6eee7;font-size:12px;background:#205044;border-left:3px solid #68e4bd;padding:10px 12px;border-radius:6px}
+.guidedButtons{margin-top:17px}.guidedPrimary{width:100%;min-height:54px;white-space:normal;text-align:center;font-weight:800;font-size:14px}
+.guidedCurrent.doneState{border-color:#4eaf84;background:linear-gradient(130deg,#143b37,#102d39)}
+.guidedHistory{margin:15px 0;border:1px solid #355667;border-radius:12px;padding:13px;color:#c9dce0;font-size:12px}
+.guidedHistory summary{cursor:pointer;font-size:13px;font-weight:800}
+.guidedHistory ol{margin:12px 0 0;padding-left:20px}.guidedHistory li{padding:4px 0;line-height:1.5}
+@media(max-width:750px){.guidedCurrent{padding:16px}.guidedCurrent h3{font-size:19px}.guidedProgress .row{flex-wrap:wrap}.guidedPhase{font-size:10px;padding:5px 7px}.guidedOrder strong{font-size:16px}}
+
+/* During med room prep, keep the active task above the dialogue on phones. */
+@media(max-width:750px){.workspace.prepWorkspace>main.panel{order:1}.workspace.prepWorkspace>.rightPanel{order:2}}
+@media(max-width:750px){.workspace.prepWorkspace>main.panel,.workspace.prepWorkspace>.rightPanel{grid-row:auto;grid-column:auto}}

@@ -80,15 +80,34 @@ def bedside_emar1(page):
             rights(page, 1)
             step(page, 'oralCount')
         else:
+            # In guided mode there is just one required action and no early draw button.
+            assert page.locator('#guided-current-step').is_visible()
+            assert page.locator('[data-act="step"][data-id="withdraw"]').count() == 0
+            # The classic checklist is still accessible, and its original safety
+            # validation continues to reject premature withdrawal.
+            page.locator('[data-act="prepView"][data-value="all"]').click()
+            step(page, 'withdraw')
+            warning = page.locator('.prepFeedback').inner_text()
+            assert 'first six rights' in warning, warning
+            page.locator('[data-act="prepView"][data-value="guided"]').click()
             rights(page, 1)
+            assert 'Choose and confirm your syringe' in page.locator('#guided-task-title').inner_text()
             page.locator('[data-input="syringe"]').select_option('tuberculin')
+            step(page, 'chooseSyringe')
+            assert 'Prepare the syringe label' in page.locator('#guided-task-title').inner_text()
             page.locator('[data-input="amount"]').fill('0.2')
-            page.locator('[data-input="air"]').fill('0.2')
             page.locator('[data-input="initials"]').fill('ST')
             page.locator('[data-input="credentials"]').fill('SN')
-            for name in ('chooseSyringe', 'labelWritten', 'vialClean', 'injectAir',
-                         'withdraw', 'clearBubbles', 'sterile', 'labelAttached'):
+            step(page, 'labelWritten')
+            step(page, 'vialClean')
+            assert 'Air volume to inject' in page.locator('#guided-current-step').inner_text()
+            page.locator('[data-input="air"]').fill('0.2')
+            step(page, 'injectAir')
+            assert 'Measured medication amount' in page.locator('#guided-current-step').inner_text()
+            step(page, 'withdraw')
+            for name in ('clearBubbles', 'sterile', 'labelAttached'):
                 step(page, name)
+            assert 'ready for instructor verification' in page.locator('#guided-current-step').inner_text()
     page.locator('[data-act="nextStage"]').click()
     assert '02 · Instructor check' in page.locator('body').inner_text(), 'Could not advance eMAR 1 to instructor'
     for index in (0, 1, 2):
@@ -156,11 +175,59 @@ def check_emar(browser):
     page.close()
 
 
+def check_guided_injections(browser):
+    # NPH clarification and simulated IM preparation with the remaining eMAR still pending.
+    for scenario, medication, syringe, amount, air, needle in (
+        ('MAR13', 'NPH insulin U100', 'insulin', '12', '0.12', None),
+        ('MAR6', 'Simulation sodium chloride', '3mL', '2', '2', '1 inch'),
+    ):
+        page = browser.new_page(viewport={'width':390, 'height':844})
+        page.set_default_timeout(8000)
+        errors=[]
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.set_content(HTML)
+        start(page, scenario)
+        page.locator('.marDrug').nth(2).click()
+        assert medication in page.locator('.guidedOrder').inner_text()
+        above = page.evaluate("document.querySelector('.workspace > main').getBoundingClientRect().top < document.querySelector('.workspace > .rightPanel').getBoundingClientRect().top")
+        assert above, 'Guided workbench must appear above the conversation on mobile'
+        for item in ('uniform','peers','hygiene1','marAllergies','gather','expiry'):
+            step(page,item)
+        rights(page,1)
+        page.locator('[data-input="syringe"]').select_option(syringe)
+        if needle:
+            page.locator('[data-input="needle"]').select_option(needle)
+        step(page,'chooseSyringe')
+        if medication.startswith('NPH'):
+            assert 'Clarify' in page.locator('#guided-task-title').inner_text()
+            page.locator('#guided-current-step [data-act="clarify"]').click()
+            step(page,'rollNPH')
+        page.locator('[data-input="amount"]').fill(amount)
+        page.locator('[data-input="initials"]').fill('ST')
+        page.locator('[data-input="credentials"]').fill('SN')
+        step(page,'labelWritten')
+        step(page,'vialClean')
+        page.locator('[data-input="air"]').fill(air)
+        step(page,'injectAir')
+        step(page,'withdraw')
+        step(page,'clearBubbles')
+        step(page,'sterile')
+        label=page.locator('.labelPreview').inner_text()
+        assert 'Date:' in label and '24h:' in label and 'ST, SN' in label,label
+        step(page,'labelAttached')
+        assert 'ready for instructor verification' in page.locator('#guided-current-step').inner_text()
+        assert page.locator('[data-act="nextMed"]').count()==1
+        page.locator('[data-act="nextMed"]').click()
+        assert not errors,errors
+        print(f'PASS guided {scenario}: {medication}, label and next medication',flush=True)
+        page.close()
+
 if __name__ == '__main__':
     with sync_playwright() as p:
         browser = launch_browser(p)
         try:
             check_furosemide(browser)
             check_emar(browser)
+            check_guided_injections(browser)
         finally:
             browser.close()
