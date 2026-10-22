@@ -75,8 +75,14 @@ The workbook has no patient specific insulin correction scale and some NPH order
 
 This app cannot verify physical hand hygiene, technique, student competence, or any clinical drug order. Checkoff scores are for self practice only. No network requests or external data processors are required by the app itself, and results are kept on device unless you export them manually.
 
-## Injection workbench help (v9)
+## Injection workbench help (v10)
 
 Drawing step buttons are available to click, but the action is recorded only when prerequisites are complete. First wash hands, check the MAR and allergies, gather the vial, confirm expiry, and complete all six first-check rights. Then select and confirm the syringe, clean the vial, and enter the proper air volume in mL before attempting withdrawal. NPH also needs instructor clarification when the MAR supplies no dose, and a vial rolling step.
 
 The workbench now displays the next required action directly above the controls, plus an inline warning next to the drawing buttons if a student taps a step too early. This avoids relying on the notice at the top of a long mobile screen. These are educational workflow gates and do not simulate physical vial actions.
+
+## After injection site care (v10)
+
+The Subcutaneous and Intramuscular checkoff sheets require gentle blotting of any blood with gauze and explicitly say **do not massage or apply pressure**. The previous version displayed an unnecessary "Massage injection site (critical error)" action. That distracting action has been removed. The aftercare steps now appear in the order required by the route and include explicit guidance that **not massaging is correct**. The "Blot any blood with gauze. Do not massage or apply pressure" confirmation records the student's safe-site-care declaration.
+
+When the student tries to chart too early, the app identifies the next missing aftercare action. When a checkoff is ended before completion, the report lists each missing aftercare step instead of an ambiguous generic message. The application cannot observe physical technique and should not present its result as a faculty grade.

@@ -222,6 +222,64 @@ def check_guided_injections(browser):
         print(f'PASS guided {scenario}: {medication}, label and next medication',flush=True)
         page.close()
 
+def check_safe_aftercare(browser):
+    # Full subcutaneous heparin drill. Verify that avoiding massage succeeds
+    # and that the student is never offered a tempting "massage" failure button.
+    page = browser.new_page(viewport={'width':390, 'height':844})
+    page.set_default_timeout(8000)
+    errors = []
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    page.set_content(HTML)
+    start(page,'DRILL10')
+    for id in ('uniform','peers','hygiene1','marAllergies','gather','expiry'):
+        step(page,id)
+    rights(page,1)
+    page.locator('[data-input="syringe"]').select_option('tuberculin')
+    step(page,'chooseSyringe')
+    page.locator('[data-input="amount"]').fill('0.2')
+    page.locator('[data-input="initials"]').fill('ST')
+    page.locator('[data-input="credentials"]').fill('SN')
+    step(page,'labelWritten')
+    step(page,'vialClean')
+    page.locator('[data-input="air"]').fill('0.2')
+    for id in ('injectAir','withdraw','clearBubbles','sterile','labelAttached'):
+        step(page,id)
+    page.locator('[data-act="nextStage"]').click()
+    rights(page,2)
+    page.locator('[data-act="answerQuiz"][data-index="0"]').click()
+    step(page,'hygiene2')
+    page.locator('[data-act="nextStage"]').click()
+    for id in ('hygiene3','introduce','patientName','patientDOB','band','allergies'):
+        step(page,id)
+    page.locator('[data-act="assess"]').first.click()
+    page.locator('[data-act="decision"][data-value="give"]').click()
+    rights(page,3)
+    for id in ('teach','syringeVerify','landmarks','preference'):
+        step(page,id)
+    page.locator('[data-input="site"]').select_option('Abdomen')
+    for id in ('gloves','wipeOpen','siteClean','bunch','warnPoke','angle'):
+        step(page,id)
+    page.locator('[data-act="administer"]').click()
+    assert page.locator('[data-act="step"][data-id="blot"]').count()==1
+    assert page.locator('[data-act="massage"]').count()==0
+    assert 'Do NOT massage the injection site.' in page.locator('.workspace').inner_text()
+    step(page,'blot')
+    assert 'done' not in (page.locator('[data-id="blot"]').first.get_attribute('class') or '').split()
+    assert 'needle withdrawal' in page.locator('body').inner_text().lower()
+    for id in ('hold10','releaseBunch','sharpSafe','blot','shred'):
+        step(page,id)
+    assert 'Aftercare: 5 of 5 complete' in page.locator('body').inner_text()
+    step(page,'document')
+    for id in ('trash','hygiene4'):
+        step(page,id)
+    page.locator('[data-act="nextStage"]').click()
+    assert page.locator('.score').inner_text()=='S','No-massage safe path must be satisfactory'
+    assert 'massag' not in '\n'.join(page.locator('.critical').all_inner_texts()).lower()
+    assert not errors,errors
+    print('PASS heparin aftercare: no massage, guided blot, satisfactory report', flush=True)
+    page.close()
+
+
 if __name__ == '__main__':
     with sync_playwright() as p:
         browser = launch_browser(p)
@@ -229,5 +287,6 @@ if __name__ == '__main__':
             check_furosemide(browser)
             check_emar(browser)
             check_guided_injections(browser)
+            check_safe_aftercare(browser)
         finally:
             browser.close()

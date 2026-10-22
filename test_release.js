@@ -164,10 +164,20 @@ assert(app.includes('class=\"prepFeedback\"'), 'Rejected drawing steps must show
 assert(read('styles.css').includes('.prepHelp'), 'Prep guide styling missing');
 assert(app.includes('function updateVitals(s,m)'),'Visible patient vitals must update');
 assert(app.includes('function typedDialogue(role,text)'),'Free text interaction missing');
+// SubQ and IM require NOT massaging. Confirming gentle blotting is the safe action.
+assert(app.includes('function postInjectionSteps(m)'),'Injection aftercare must have a single graded sequence');
+assert(app.includes('function postInjectionUI(s,m,st)'),'Aftercare should have a visible guided screen');
+assert(app.includes('Do NOT massage the injection site.'),'Site care instructions must be explicit');
+assert(app.includes('do not massage or apply pressure') || app.includes('Do not massage or apply pressure'),'Checkoff requires no massage or pressure');
+assert(!app.includes('data-act="massage"'),'Do not tempt a student with a prohibited massage action');
+assert(!app.includes("if(a==='massage'"),'Massage is not a simulated success action');
+assert(app.includes("postInjectionSteps(m).filter(id=>!st.done.has(id))"),'Report must identify exactly which post injection step is incomplete');
+assert(app.includes("if(id==='blot')log(s,'Confirmed safe site care'"),'Safe nonmassage confirmation must appear in the action log');
+
 assert(!/👩🏻‍🦳/.test(app),'Do not use platform specific emoji for patient');
 assert(read('README.md').includes('confirmed with their instructor and college'),'Publication status outdated');
 const sw=read('sw.js');
-assert(/medpass-lab-v9-[0-9a-f]{12}/.test(sw),'Service worker must use versioned content hash');
+assert(/medpass-lab-v10-[0-9a-f]{12}/.test(sw),'Service worker must use versioned content hash');
 assert(sw.includes('dialog_engine.js'),'Offline cache must include dialogue engine');
 assert(sw.includes("fetch(event.request,{cache:'no-store'})"));
 assert(sw.includes('key.startsWith(PREFIX)'));
@@ -185,7 +195,7 @@ assert(read(browserFile).includes("os.environ.get('CHROMIUM_PATH')"),'Browser pa
 assert(!read(browserFile).includes('/usr/bin/chromium'),'Browser path must not be hard coded');
 assert(read(browserFile).includes("start(page, 'MAR1')"),'Missing EMAR browser coverage');
 if(process.argv.includes('--browser')){
- console.log('Core v9 assertions passed. Running required Chromium browser checks...');
+ console.log('Core v10 assertions passed. Running required Chromium browser checks...');
  try{
   execFileSync(process.env.PYTHON || 'python3',[path.join(root,browserFile)],{cwd:root,stdio:'inherit',timeout:120000});
  }catch(error){
@@ -194,7 +204,7 @@ if(process.argv.includes('--browser')){
   console.error('Optional: set PYTHON to your Python interpreter and CHROMIUM_PATH to your Chromium executable.');
   process.exit(1);
  }
- console.log('All v9 checks passed, including real Chromium bedside interactions.');
+ console.log('All v10 checks passed, including real Chromium bedside interactions.');
 }else{
- console.log('All v9 core release assertions passed (Node only). For complete browser verification: node test_release.js --browser');
+ console.log('All v10 core release assertions passed (Node only). For complete browser verification: node test_release.js --browser');
 }
